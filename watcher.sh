@@ -9,12 +9,12 @@ while true; do
     number_of_restarts=$(kubectl get pods --namespace "${namespace}" -l app="${deployment}" -o jsonpath="{.items[0].status.containerStatuses[0].restartCount}")
 
     # display the number of restarts we have done:
-    echo "total number of restarts: $number_of_restarts"
+    echo "current number of restarts: ${number_of_restarts}"
 
-    # check restart limit:
+    # check restart limit & scale down if necessary:
     if (( number_of_restarts > maximum_restarts_allowed )); then 
         echo "No remaining restarts. Slowing down the deployment"
-        kubectl scale --replicas=0 deployment/"${deployment}"
+        kubectl scale --replicas=0 deployment/${deployment} ${namespace}
         break
     fi
 
